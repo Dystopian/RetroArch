@@ -1,6 +1,8 @@
 include version.all
 
-$(call assert,$(call seq,$(TARGET_PREFIX),arm-webos-linux-gnueabi-),webOS SDK isn't setup properly. See https://github.com/webosbrew/meta-lg-webos-ndk#compile-program-by-command-line)
+ifneq ($(TARGET_PREFIX),arm-webos-linux-gnueabi-)
+   $(error webOS SDK isn't setup properly. See https://github.com/webosbrew/meta-lg-webos-ndk#compile-program-by-command-line)
+endif
 
 WEBOS_FREETYPE_CONFIG ?= $(SDKTARGETSYSROOT)/usr/bin/freetype-config
 
@@ -15,6 +17,7 @@ PACKAGE_VERSION := $(patsubst "%",%,$(RARCH_VERSION))
 
 DEBUG ?= 0
 
+HAVE_WEBOS=1
 HAVE_SCREENSHOTS = 1
 HAVE_REWIND = 1
 HAVE_7ZIP = 1
@@ -97,10 +100,10 @@ HAVE_SHADERPIPELINE = 1
 HAVE_STB_FONT = 1
 HAVE_STB_IMAGE = 1
 HAVE_STB_VORBIS = 1
-HAVE_STDIN_CMD = 1
+HAVE_STDIN_CMD = 0
 HAVE_STRCASESTR = 1
 HAVE_THREADS = 1
-HAVE_UDEV = 0
+HAVE_UDEV = 1
 HAVE_RGUI = 1
 HAVE_MATERIALUI = 0
 HAVE_XMB = 1
@@ -121,13 +124,15 @@ TARGET = retroarch
 OBJ :=
 LINK := $(CXX)
 DEF_FLAGS += -ffunction-sections -fdata-sections
-DEF_FLAGS += -I. -Ideps -Ideps/stb -DWEBOS=1 -MMD
+DEF_FLAGS += -I. -Ideps -Ideps/stb -MMD
 DEF_FLAGS += -Wall -Wno-unused-variable
 LIBS := -ldl -lz -lrt -pthread
 CFLAGS :=
 CXXFLAGS := -fno-exceptions -fno-rtti -std=c++11 -D__STDC_CONSTANT_MACROS
 ASFLAGS :=
 LDFLAGS := -Wl,--gc-sections
+UDEV_CFLAGS += -DHAVE_UDEV
+UDEV_LIBS += -ludev
 INCLUDE_DIRS = -I$(WEBOS_INC_DIR)
 LIBRARY_DIRS = -L$(WEBOS_LIB_DIR)
 DEFINES := -DRARCH_INTERNAL -D_FILE_OFFSET_BITS=64 -UHAVE_STATIC_DUMMY

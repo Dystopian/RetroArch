@@ -87,6 +87,7 @@ static void sdl_ctx_destroy(void *data)
       return;
 
    sdl_ctx_destroy_resources(sdl);
+   /* in webOS RetroArch exits on ROM load without an explicitly shutdown of SDL Video subsystem */
 #ifndef WEBOS
    if (sdl->subsystem_inited)
 #endif
